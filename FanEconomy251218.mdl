@@ -1,0 +1,539 @@
+{UTF-8}
+Data from NonFans=NonFans* Baseline Discussion Per Hour*Average Workhour of Each Fan*\
+		gamma*EXP(-s*beta)
+	~	comment/Month
+	~	Conversation from Non-Fans
+		Discouraged Discussion is regular discussion rate by default
+		r is 1 by default
+	|
+
+Proportion data making=Data from DataMaking/Traffic Data
+	~	Dmnl
+	~		|
+
+s=0
+	~	Dmnl
+	~		|
+
+Conversion rate per show exposure=0.05
+	~	Dmnl/show [?,?,0.01]
+	~	the probability for each show, if watched, to turn a non-fan into a fan
+	|
+
+Data from Interpersonal Interaction=(Remaining workforce after data making*(1-Allocation to fan art\
+		))*Baseline Discussion Per Hour
+	~	comment/Month
+	~	discussion not driven by data-making
+	|
+
+Traffic Data=(Data from DataMaking*w+Data from Interpersonal Interaction+Data from NonFans\
+		)
+	~	comment/Month
+	~	Traffic Data
+		(comment/Month + comment/Month)/(comment/month)
+	|
+
+signal=Traffic Data/baseline TD
+	~	Dmnl
+	~		|
+
+change in perception=(signal-Perceived Business Value)/Time to update PBV
+	~	Dmnl/Month
+	~		|
+
+Effect of Fan Art=Number of Relavent fan art/Reference Arts
+	~	Dmnl
+	~		|
+
+Effect of Interaction=Data from Interpersonal Interaction/Reference Discussion
+	~	Dmnl
+	~		|
+
+NonFans= INTEG (Churn Rate-Recruitment,
+		100000)
+	~	person
+	~		|
+
+Recruitment from show watching=NonFans*Show exposure*Conversion rate per show exposure
+	~	person/Month
+	~	advertising effectiveness
+	|
+
+Erosion time=EXP(-Proportion data making*kappa)*Base erosion time
+	~	Month
+	~	Maybe other formulation would also work for a decreasing function
+	|
+
+Fan Size= INTEG (Recruitment-Churn Rate,
+		0)
+	~	person
+	~		|
+
+Show exposure=Relevant Shows*Show exposure probability
+	~	show/Month
+	~	One's probability of liking the idol with all the shows exposed; \
+		Conversion probability from direct exposure
+	|
+
+Churn Rate=Fan Size/Erosion time
+	~	person/Month
+	~		|
+
+DM Discussion Per Hour=
+	Baseline Discussion Per Hour*(1+(maxfactor-1)*beta)
+	~	comment/Hour
+	~	DM discussion rate
+	|
+
+Baseline Discussion Per Hour=
+	5
+	~	comment/Hour [0,10]
+	~		|
+
+Reference Arts=
+	300
+	~	art [0,10000,100]
+	~		|
+
+Reference Discussion=
+	50000
+	~	comment/Month [0,1e+06,100000]
+	~	50000
+	|
+
+Data from DataMaking=POWER(Total Workhours Available*alpha/Reference Hours, 1-lambda)\
+		*Reference Hours*DM Discussion Per Hour
+	~	comment/Month
+	~	comments made for data-making
+	|
+
+Total Workhours Available=
+	Fan Size*Average Workhour of Each Fan
+	~	Hour/Month
+	~		|
+
+gamma=0.1
+	~	Dmnl [0,10]
+	~	Appealing to Outsiders
+	|
+
+Attractiveness of fan circle=
+	(2/(1+EXP(-Effect of Fan Art))-1)*
+	(2/(1+EXP(-Effect of Interaction))-1)
+	~	Dmnl
+	~		|
+
+maxfactor=
+	5
+	~	Dmnl [1,20]
+	~	max speed up factor
+	|
+
+Base erosion time=3
+	~	Month [0,?]
+	~		|
+
+lambda=0
+	~	Dmnl [0,0.3]
+	~	Motivation Decay Rate
+	|
+
+kappa=0.5
+	~	Dmnl [0,1]
+	~	Cross-Platform Competitive Pressure
+	|
+
+Reference Hours=
+	1
+	~	Hour/Month
+	~		|
+
+Ratio of Show to Art=
+	10
+	~	Dmnl/show [0,100,0.1]
+	~		|
+
+New fan art=
+	Remaining workforce after data making*Allocation to fan art*Fan art per hour*Relevant Shows\
+		*Ratio of Show to Art
+	~	art/Month
+	~	hour/month*art/hour* show*1/show
+	|
+
+conversion rate=
+	Attractiveness of fan circle*Effect of ingroup att on WOM
+	~	Dmnl/person
+	~	rate of converting non-fans into fans through WOM
+	|
+
+Show Erosion=
+	Relevant Shows/(Show obsolescence time)
+	~	show/Month
+	~		|
+
+baseline TD=500000
+	~	comment/Month [0,500000,100000]
+	~		|
+
+Show exposure probability=0.05
+	~	Dmnl/(Month) [0,0.2,0.01]
+	~	the probability for a relevant show to be watched by a non-fan
+	|
+
+New Shows per Month=
+	POWER(Perceived Business Value, Effect of PBV on Show)*"reference show/month"
+	~	show/Month
+	~		|
+
+Show obsolescence time=
+	36
+	~	Month [0,36,6]
+	~		|
+
+Relevant Shows= INTEG (
+	New Shows per Month-Show Erosion,
+		1)
+	~	show
+	~		|
+
+Effect of PBV on Show=
+	0.5
+	~	Dmnl [0,0.5,0.01]
+	~		|
+
+Fan art per hour=
+	0.0002
+	~	art/Hour [0,0.001,1e-05]
+	~		|
+
+Allocation to fan art=
+	0.5
+	~	Dmnl
+	~	This allocation is inherent for fans.
+	|
+
+w=
+	0.9
+	~	Dmnl [0,1]
+	~	Contribution of Gaming Engagement to Signals
+	|
+
+Average Workhour of Each Fan=
+	2*30
+	~	Hour/person/Month
+	~		|
+
+Remaining workforce after data making=
+	Total Workhours Available*(1-alpha)
+	~	Hour/Month
+	~		|
+
+contact rate=
+	0.2
+	~	person/Month [0,0.5,0.05]
+	~	contact rate between fans and non-fans
+	|
+
+Recruitment from fans=
+	(contact rate*conversion rate*Fan Size*NonFans)/(Fan Size+NonFans)
+	~	person/Month
+	~	(contact rate*conversion rate*Fan Size*Passerby)/(Fan Size+Passerby)
+	|
+
+Time to update PBV=
+	12
+	~	Month [0,36,1]
+	~	Time to adjust business value perception
+	|
+
+beta=0.8
+	~	Dmnl [0,1,0.1]
+	~	Platform Strategy: Intensity of DM Policy
+	|
+
+fan art erosion=
+	Number of Relavent fan art/ Fan art obsolescence time
+	~	art/Month
+	~		|
+
+Effect of ingroup att on WOM=
+	1
+	~	Dmnl/person [0,5,0.1]
+	~		|
+
+Perceived Business Value= INTEG (
+	change in perception,
+		0)
+	~	Dmnl
+	~		|
+
+Recruitment=
+	Recruitment from show watching+Recruitment from fans
+	~	person/Month
+	~		|
+
+"reference show/month"=
+	0.2
+	~	show/Month [0,0.5,0.01]
+	~	average idol's show per month
+	|
+
+alpha=0.8
+	~	Dmnl [0,1]
+	~	Idol Agency's Strategy: Allocation to data making
+	|
+
+Number of Relavent fan art= INTEG (
+	New fan art-fan art erosion,
+		1)
+	~	art [0,?]
+	~		|
+
+Fan art obsolescence time=
+	36
+	~	Month [0,36,6]
+	~		|
+
+********************************************************
+	.Control
+********************************************************~
+		Simulation Control Parameters
+	|
+
+FINAL TIME  = 36
+	~	Month
+	~	The final time for the simulation.
+	|
+
+INITIAL TIME  = 0
+	~	Month
+	~	The initial time for the simulation.
+	|
+
+SAVEPER  = 
+        TIME STEP
+	~	Month [0,?]
+	~	The frequency with which output is stored.
+	|
+
+TIME STEP  = 0.0078125
+	~	Month [0,?]
+	~	The time step for the simulation.
+	|
+
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*Fan Economy
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,55,2
+10,1,Perceived Business Value,2110,530,71,28,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,2,Number of Relavent fan art,2212,951,74,23,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,3,48,2156,326,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,4,6,3,100,0,0,22,0,192,0,-1--1--1,,1|(2156,370)|
+1,5,6,1,4,0,0,22,0,192,0,-1--1--1,,1|(2156,460)|
+11,6,0,2156,412,8,6,33,3,0,0,2,0,0,0,0,0,0,0,0,0
+10,7,change in perception,2100,412,48,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,8,48,2188,797,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,9,11,8,100,0,0,22,0,192,0,-1--1--1,,1|(2188,836)|
+1,10,11,2,4,0,0,22,0,192,0,-1--1--1,,1|(2188,903)|
+11,11,0,2188,873,8,6,33,3,0,0,2,0,0,0,0,0,0,0,0,0
+10,12,New fan art,2119,873,61,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,13,Fan Size,786,821,49,23,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,14,alpha,1380,594,47,19,8,3,1,26,-1,1,0,0,0-0-0,0-0-0,|16|B|251-2-7,0,0,0,0,0,0
+12,15,48,2483,961,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,16,18,2,100,0,0,22,0,192,0,-1--1--1,,1|(2341,961)|
+1,17,18,15,4,0,0,22,0,192,0,-1--1--1,,1|(2440,961)|
+11,18,0,2402,961,6,8,34,3,0,0,1,0,0,0,0,0,0,0,0,0
+10,19,fan art erosion,2402,991,42,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,20,2,19,1,0,43,0,1,192,0,0-0-0,|||0-0-0,1|(2253,1012)|
+10,21,Fan art obsolescence time,2239,1082,74,21,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,22,21,19,1,2,45,2,1,192,0,0-0-255,|||0-0-0,1|(2353,1047)|
+10,23,Data from DataMaking,1109,496,90,20,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,24,conversion rate,1474,981,61,22,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+10,25,Traffic Data,1197,269,53,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,26,NonFans,767,1237,42,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,27,29,26,100,0,0,22,0,192,0,-1--1--1,,1|(797,1129)|
+1,28,29,13,4,0,0,22,0,192,0,-1--1--1,,1|(797,933)|
+11,29,0,797,1033,12,10,33,3,0,0,4,0,0,0,0,0,0,0,0,0
+10,30,Recruitment,857,1033,48,22,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,31,33,13,100,0,0,22,0,192,0,-1--1--1,,1|(762,935)|
+1,32,33,26,4,0,0,22,0,192,0,-1--1--1,,1|(762,1128)|
+11,33,0,762,1034,13,8,33,3,0,0,2,0,0,0,0,0,0,0,0,0
+10,34,Churn Rate,705,1034,44,22,40,3,0,0,-1,1,0,0,0,0,0,0,0,0
+1,35,13,33,1,0,43,0,1,192,0,0-0-0,|||0-0-0,1|(678,902)|
+10,36,Relevant Shows,2109,666,61,22,3,3,0,0,-1,0,0,0,0,0,0,0,0,0
+12,37,48,1868,664,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,38,40,37,100,0,0,22,0,192,0,-1--1--1,,1|(1907,664)|
+1,39,40,36,4,0,0,22,0,192,0,-1--1--1,,1|(1998,664)|
+11,40,0,1943,664,6,8,34,3,0,0,3,0,0,0,0,0,0,0,0,0
+10,41,New Shows per Month,1943,636,70,20,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,42,1,41,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(2071,594)|
+10,43,Show obsolescence time,2350,547,98,14,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+10,44,"reference show/month",1800,551,66,21,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,45,44,41,0,2,43,2,1,192,0,0-0-255,|||0-0-0,1|(0,0)|
+10,46,beta,856,209,46,26,8,3,1,26,-1,1,0,0,0-0-0,0-0-0,|16|B|255-0-0,0,0,0,0,0,0
+1,47,1,7,1,0,45,0,1,192,0,0-0-0,|||0-0-0,1|(2077,470)|
+10,48,Time to update PBV,2073,292,50,24,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,49,48,7,0,2,45,2,0,192,0,-1--1--1,,1|(0,0)|
+10,50,Recruitment from show watching,1104,1177,64,26,8,3,0,16,-1,0,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+1,51,50,30,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(947,1108)|
+10,52,Recruitment from fans,1098,929,77,37,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,53,13,52,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(938,848)|
+1,54,52,30,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1015,1028)|
+1,55,24,52,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1334,938)|
+1,56,26,52,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1004,1137)|
+10,57,Relevant Shows,1542,1212,56,18,8,2,0,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,58,Effect of ingroup att on WOM,1512,870,80,18,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,59,58,24,0,2,43,2,0,192,0,-1--1--1,,1|(0,0)|
+10,60,Fan Size,633,171,44,9,8,2,17,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,61,NonFans,640,130,36,9,8,2,17,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+10,62,Show exposure,1301,1186,71,23,8,3,0,16,-1,1,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+1,63,62,50,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+10,64,contact rate,1289,1023,53,22,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,65,64,52,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+1,66,23,25,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1143,387)|
+10,67,w,1264,385,46,26,8,3,1,26,-1,1,0,0,0-0-0,0-0-0,|14||255-0-0,0,0,0,0,0,0
+1,68,67,25,0,1,32,0,0,192,0,-1--1--1,,1|(0,0)|
+10,69,Allocation to fan art,1727,648,56,22,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+10,70,Data from Interpersonal Interaction,1544,519,99,17,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,71,14,23,0,1,43,0,0,192,0,-1--1--1,,1|(0,0)|
+1,72,69,70,0,2,45,2,0,192,0,-1--1--1,,1|(0,0)|
+10,73,Remaining workforce after data making,1443,762,69,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,74,14,73,0,1,45,0,0,192,0,-1--1--1,,1|(0,0)|
+1,75,73,70,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+10,76,Total Workhours Available,1061,755,42,27,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,77,Average Workhour of Each Fan,861,675,64,26,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,78,77,76,0,2,43,2,0,192,0,-1--1--1,,1|(0,0)|
+1,79,76,23,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1071,630)|
+1,80,76,73,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+1,81,13,76,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+10,82,Fan art per hour,1932,902,46,21,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+10,83,Attractiveness of fan circle,1785,1161,61,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,84,69,12,0,2,43,2,0,192,0,-1--1--1,,1|(0,0)|
+1,85,82,12,0,2,43,2,0,192,0,-1--1--1,,1|(0,0)|
+1,86,73,12,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+1,87,83,24,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1590,1069)|
+1,88,26,50,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(974,1215)|
+10,89,Show exposure probability,1549,1140,99,24,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+12,90,48,2480,665,10,8,0,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,91,93,36,100,0,0,22,0,192,0,-1--1--1,,1|(2254,665)|
+1,92,93,90,4,0,0,22,0,192,0,-1--1--1,,1|(2410,665)|
+11,93,0,2344,665,6,8,34,3,0,0,3,0,0,0,0,0,0,0,0,0
+10,94,Show Erosion,2344,642,54,15,40,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,95,36,94,1,0,43,0,1,192,0,0-0-0,|||0-0-0,1|(2206,605)|
+1,96,43,94,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+1,97,70,25,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1441,409)|
+10,98,baseline TD,1839,160,55,30,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+10,99,Reference Discussion,1801,885,64,18,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+10,100,Reference Arts,2048,945,42,21,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+10,101,Effect of PBV on Show,1935,499,61,22,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,102,101,41,0,2,43,2,0,192,0,-1--1--1,,1|(0,0)|
+10,103,Conversion rate per show exposure,1221,1315,61,27,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+12,104,0,2117,466,17,17,4,7,0,0,-1,1,0,0,0,0,0,0,0,0
+B
+12,105,0,2235,633,17,17,4,7,0,0,-1,1,0,0,0,0,0,0,0,0
+B
+12,106,0,2318,993,17,17,5,7,0,0,-1,1,0,0,0,0,0,0,0,0
+B
+12,107,0,725,930,17,17,5,7,0,0,-1,1,0,0,0,0,0,0,0,0
+B
+12,108,0,863,926,17,17,4,7,0,1,-1,1,0,0,0-0-0,0-0-0,|||0-0-0,0,0,0,0,0,0
+R
+12,109,0,864,1117,17,17,5,7,0,0,-1,1,0,0,0,0,0,0,0,0
+B
+12,110,0,863,963,21,8,8,7,0,0,-1,1,0,0,0,0,0,0,0,0
+WOM
+12,111,0,863,1163,50,28,8,7,0,0,-1,1,0,0,0,0,0,0,0,0
+Market Saturation
+1,112,36,12,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+10,113,Ratio of Show to Art,1819,763,57,22,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,114,113,12,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+10,115,Erosion time,559,891,53,22,8,3,1,0,-1,0,0,0,0,0,0,0,0,0
+10,116,maxfactor,1218,169,42,22,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+10,117,kappa,526,998,34,17,8,3,1,26,-1,1,0,0,0-0-0,0-0-0,|16|B|255-0-0,0,0,0,0,0,0
+1,118,117,115,0,1,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,119,Base erosion time,496,778,49,21,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,120,119,115,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+10,121,lambda,1005,626,55,35,8,3,1,26,-1,1,0,0,0-0-0,0-0-0,|16|B|255-0-0,0,0,0,0,0,0
+1,122,121,23,0,1,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,123,Reference Hours,1227,609,42,22,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+1,124,123,23,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+10,125,Data from NonFans,600,421,70,20,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,126,26,125,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(410,920)|
+1,127,125,25,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(898,299)|
+1,128,77,125,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+10,129,gamma,524,305,46,26,8,3,1,26,-1,1,0,0,0-0-0,0-0-0,|16|B|255-0-0,0,0,0,0,0,0
+10,130,Effect of Interaction,1749,1033,48,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+10,131,Effect of Fan Art,1955,1036,57,22,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,132,131,83,0,0,43,13,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+1,133,130,83,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+1,134,99,130,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+1,135,70,130,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+1,136,100,131,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+1,137,2,131,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+10,138,Baseline Discussion Per Hour,953,61,61,23,8,3,2,0,-1,0,0,0,0,0,0,0,0,0
+10,139,DM Discussion Per Hour,1081,144,57,22,8,3,1,0,-1,0,0,0,0,0,0,0,0,0
+1,140,46,139,0,1,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,141,116,139,0,2,43,2,0,192,0,-1--1--1,,1|(0,0)|
+1,142,138,139,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+1,143,139,23,0,1,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,144,129,125,0,1,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,145,Show exposure,441,444,74,22,8,2,3,3,-1,0,0,0,128-128-128,0-0-0,|||128-128-128,0,0,0,0,0,0
+1,146,57,62,0,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(0,0)|
+1,147,89,62,0,2,0,0,0,192,0,-1--1--1,,1|(0,0)|
+1,148,103,50,1,2,0,2,0,192,0,-1--1--1,,1|(1134,1253)|
+1,149,115,34,1,1,0,0,0,192,0,-1--1--1,,1|(604,972)|
+10,150,Proportion data making,664,710,61,26,8,3,1,0,-1,0,0,0,0,0,0,0,0,0
+1,151,150,115,1,1,0,0,0,192,0,-1--1--1,,1|(587,802)|
+1,152,138,125,1,2,0,2,0,192,0,-1--1--1,,1|(710,178)|
+1,153,138,70,1,2,0,2,0,192,0,-1--1--1,,1|(1443,252)|
+10,154,signal,1676,265,46,26,8,3,0,0,-1,0,0,0,0,0,0,0,0,0
+1,155,25,154,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1428,237)|
+1,156,98,154,0,2,0,2,0,192,0,-1--1--1,,1|(0,0)|
+1,157,154,7,1,0,43,14,1,192,0,0-0-0,|||0-0-0,1|(1889,313)|
+1,158,23,150,1,1,0,0,0,192,0,-1--1--1,,1|(888,568)|
+1,159,25,150,1,1,0,0,0,192,0,-1--1--1,,1|(885,445)|
+1,160,46,125,0,2,0,0,0,192,0,-1--1--1,,1|(0,0)|
+10,161,s,443,367,46,26,8,3,1,0,-1,0,0,0,0,0,0,0,0,0
+1,162,161,125,0,1,0,0,0,192,0,-1--1--1,,1|(0,0)|
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 2
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,2
+\\\---/// Sketch information - do not modify anything except names
+V300  Do not put anything below this section - it will be ignored
+*View 3
+$-1--1--1,0,|12||-1--1--1|-1--1--1|-1--1--1|-1--1--1|-1--1--1|96,96,100,2
+///---\\\
+:L<%^E!@
+1:base.vdfx
+4:Time
+5:gamma
+9:base
+19:55,0
+24:0
+25:36
+26:36
+23:0
+15:0,0,0,0,0,0
+27:0,
+34:0,
+42:0
+72:0
+73:0
+95:0
+96:0
+97:0
+77:0
+78:0
+102:1
+93:0
+94:0
+92:0
+91:0
+90:0
+87:0
+75:
+43:
+103:8,8,8,3,8
+105:0,0,0,0,0,0,0,0,0,0
+104:Courier New|12||0-0-0|0-0-0|-1--1--1|0-0-255|192-192-192|-1--1--1
